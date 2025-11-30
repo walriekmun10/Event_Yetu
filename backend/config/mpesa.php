@@ -9,7 +9,7 @@
 
 // TEST MODE - Set to true to simulate payments without calling M-Pesa API
 // Useful for local development without ngrok
-define('MPESA_TEST_MODE', false); // Set to false in production
+define('MPESA_TEST_MODE', true); // Set to false in production with valid M-Pesa credentials
 
 // M-Pesa API Credentials (Safaricom Sandbox)
 define('MPESA_ENV', 'sandbox'); // 'sandbox' or 'production'

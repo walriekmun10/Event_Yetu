@@ -87,7 +87,7 @@ function getServiceRecommendations($pdo) {
     
     // Get trending services in user's preferred categories
     if (count($userCategories) > 0) {
-        $placeholders = implode(',', array_fill(0, count($userCategories), '?'));
+        $placeholders = implode(',', array_map(fn($i) => ":cat$i", array_keys($userCategories)));
         $stmt = $pdo->prepare("
             SELECT s.*, COUNT(b.booking_id) as booking_count,
                    'Based on your booking history' as recommendation_reason
@@ -102,7 +102,10 @@ function getServiceRecommendations($pdo) {
             ORDER BY booking_count DESC, s.service_created_at DESC
             LIMIT 6
         ");
-        $params = array_merge($userCategories, [':user_id' => $userId]);
+        $params = [':user_id' => $userId];
+        foreach ($userCategories as $i => $cat) {
+            $params[":cat$i"] = $cat;
+        }
         $stmt->execute($params);
         $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } else {

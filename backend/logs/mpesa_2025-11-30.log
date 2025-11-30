@@ -1,0 +1,56 @@
+
+[2025-11-30 13:47:30] [STK_PUSH_REQUEST]
+{
+    "BusinessShortCode": "174379",
+    "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUxMTMwMTM0NzMw",
+    "Timestamp": "20251130134730",
+    "TransactionType": "CustomerPayBillOnline",
+    "Amount": 50000,
+    "PartyA": "254706288861",
+    "PartyB": "174379",
+    "PhoneNumber": "254706288861",
+    "CallBackURL": "https:\/\/unquailing-unsucceeded-mitzi.ngrok-free.dev\/Event-yetu\/backend\/api\/payments\/mpesa_callback.php",
+    "AccountReference": "BOOK-31",
+    "TransactionDesc": "Payment for Professional"
+}
+--------------------------------------------------------------------------------
+
+[2025-11-30 13:47:30] [STK_PUSH_RESPONSE]
+{
+    "requestId": "db04-44c6-a5f2-86dfce288d2d265",
+    "errorCode": "404.001.03",
+    "errorMessage": "Invalid Access Token"
+}
+--------------------------------------------------------------------------------
+
+[2025-11-30 13:52:39] [STK_PUSH_REQUEST]
+{
+    "BusinessShortCode": "174379",
+    "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUxMTMwMTM1MjM5",
+    "Timestamp": "20251130135239",
+    "TransactionType": "CustomerPayBillOnline",
+    "Amount": 50000,
+    "PartyA": "254708374149",
+    "PartyB": "174379",
+    "PhoneNumber": "254708374149",
+    "CallBackURL": "https:\/\/unquailing-unsucceeded-mitzi.ngrok-free.dev\/Event-yetu\/backend\/api\/payments\/mpesa_callback.php",
+    "AccountReference": "EventYetu31",
+    "TransactionDesc": "Event Service Payment"
+}
+--------------------------------------------------------------------------------
+
+[2025-11-30 13:52:40] [STK_PUSH_RESPONSE]
+{
+    "requestId": "db04-44c6-a5f2-86dfce288d2d301",
+    "errorCode": "404.001.03",
+    "errorMessage": "Invalid Access Token"
+}
+--------------------------------------------------------------------------------
+
+[2025-11-30 13:55:17] [TEST_MODE]
+{
+    "message": "Simulated payment completed",
+    "payment_id": "6",
+    "mpesa_receipt": "TEST62A1BAE1B8"
+}
+--------------------------------------------------------------------------------

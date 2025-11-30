@@ -45,33 +45,33 @@ try {
     // Build query based on user role
     if ($userRole === 'admin') {
         // Admin sees all payments
-        $stmt = $pdo->prepare('SELECT p.*, b.client_id, b.service_id, s.name as service_name, 
-                               u.name as client_name
+        $stmt = $pdo->prepare('SELECT p.*, b.booking_client_id, b.booking_service_id, s.service_name, 
+                               u.user_name as client_name
                                FROM payments p
-                               JOIN bookings b ON p.booking_id = b.id
-                               JOIN services s ON b.service_id = s.id
-                               JOIN users u ON b.client_id = u.id
-                               ORDER BY p.created_at DESC');
+                               JOIN bookings b ON p.payment_booking_id = b.booking_id
+                               JOIN services s ON b.booking_service_id = s.service_id
+                               JOIN users u ON b.booking_client_id = u.user_id
+                               ORDER BY p.payment_created_at DESC');
         $stmt->execute();
     } elseif ($userRole === 'provider') {
         // Provider sees payments for their services
-        $stmt = $pdo->prepare('SELECT p.*, b.client_id, b.service_id, s.name as service_name,
-                               u.name as client_name
+        $stmt = $pdo->prepare('SELECT p.*, b.booking_client_id, b.booking_service_id, s.service_name,
+                               u.user_name as client_name
                                FROM payments p
-                               JOIN bookings b ON p.booking_id = b.id
-                               JOIN services s ON b.service_id = s.id
-                               JOIN users u ON b.client_id = u.id
-                               WHERE s.provider_id = :uid
-                               ORDER BY p.created_at DESC');
+                               JOIN bookings b ON p.payment_booking_id = b.booking_id
+                               JOIN services s ON b.booking_service_id = s.service_id
+                               JOIN users u ON b.booking_client_id = u.user_id
+                               WHERE s.service_provider_id = :uid
+                               ORDER BY p.payment_created_at DESC');
         $stmt->execute([':uid' => $userId]);
     } else {
         // Client sees their own payments
-        $stmt = $pdo->prepare('SELECT p.*, b.client_id, b.service_id, s.name as service_name
+        $stmt = $pdo->prepare('SELECT p.*, b.booking_client_id, b.booking_service_id, s.service_name
                                FROM payments p
-                               JOIN bookings b ON p.booking_id = b.id
-                               JOIN services s ON b.service_id = s.id
-                               WHERE b.client_id = :uid
-                               ORDER BY p.created_at DESC');
+                               JOIN bookings b ON p.payment_booking_id = b.booking_id
+                               JOIN services s ON b.booking_service_id = s.service_id
+                               WHERE b.booking_client_id = :uid
+                               ORDER BY p.payment_created_at DESC');
         $stmt->execute([':uid' => $userId]);
     }
 
@@ -80,17 +80,17 @@ try {
     // Format response
     $formattedPayments = array_map(function ($p) {
         return [
-            'id' => $p['id'],
-            'bookingId' => $p['booking_id'],
+            'id' => $p['payment_id'],
+            'bookingId' => $p['payment_booking_id'],
             'serviceName' => $p['service_name'],
             'clientName' => $p['client_name'] ?? null,
-            'amount' => floatval($p['amount']),
-            'phone' => $p['phone'],
-            'status' => $p['status'],
-            'mpesaReceipt' => $p['mpesa_receipt'],
-            'transactionDate' => $p['transaction_date'],
-            'resultDesc' => $p['result_desc'],
-            'createdAt' => $p['created_at']
+            'amount' => floatval($p['payment_amount']),
+            'phone' => $p['payment_phone'],
+            'status' => $p['payment_status'],
+            'mpesaReceipt' => $p['payment_mpesa_receipt'],
+            'transactionDate' => $p['payment_transaction_date'],
+            'resultDesc' => $p['payment_result_desc'],
+            'createdAt' => $p['payment_created_at']
         ];
     }, $payments);
 
