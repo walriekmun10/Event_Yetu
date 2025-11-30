@@ -9,7 +9,7 @@
 
 // TEST MODE - Set to true to simulate payments without calling M-Pesa API
 // Useful for local development without ngrok
-define('MPESA_TEST_MODE', true); // Set to false in production
+define('MPESA_TEST_MODE', false); // Set to false in production
 
 // M-Pesa API Credentials (Safaricom Sandbox)
 define('MPESA_ENV', 'sandbox'); // 'sandbox' or 'production'
@@ -27,7 +27,7 @@ define('MPESA_PASSKEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ad
 // Callback URL (where M-Pesa will send payment confirmation)
 // IMPORTANT: Must be a publicly accessible HTTPS URL
 // For local testing, use ngrok or similar tunneling service
-define('MPESA_CALLBACK_URL', 'https://your-domain.com/Event-yetu/backend/api/payments/mpesa_callback.php');
+define('MPESA_CALLBACK_URL', 'https://unquailing-unsucceeded-mitzi.ngrok-free.dev/Event-yetu/backend/api/payments/mpesa_callback.php');
 
 // API URLs
 if (MPESA_ENV === 'sandbox') {

@@ -8,6 +8,26 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/jwt.php';
 
+// Helper function to map service database columns to frontend format
+function mapServiceForAI($s) {
+    return [
+        'id' => $s['service_id'] ?? null,
+        'provider_id' => $s['service_provider_id'] ?? null,
+        'category' => $s['service_category'] ?? null,
+        'name' => $s['service_name'] ?? null,
+        'description' => $s['service_description'] ?? null,
+        'price' => $s['service_price'] ?? null,
+        'image' => $s['service_image'] ?? null,
+        'image_url' => $s['service_image'] ? 'uploads/services/' . $s['service_image'] : null,
+        'status' => $s['service_status'] ?? null,
+        'created_at' => $s['service_created_at'] ?? null,
+        'booking_count' => $s['booking_count'] ?? 0,
+        'recent_bookings' => $s['recent_bookings'] ?? 0,
+        'recommendation_reason' => $s['recommendation_reason'] ?? null,
+        'trend_reason' => $s['trend_reason'] ?? null
+    ];
+}
+
 $action = $_GET['action'] ?? '';
 
 try {
@@ -101,9 +121,12 @@ function getServiceRecommendations($pdo) {
         $recommendations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    // Map database columns to frontend format
+    $mappedRecommendations = array_map('mapServiceForAI', $recommendations);
+    
     echo json_encode([
         'success' => true,
-        'recommendations' => $recommendations,
+        'recommendations' => $mappedRecommendations,
         'personalized' => count($userCategories) > 0
     ]);
 }
@@ -127,9 +150,12 @@ function getTrendingServices($pdo) {
     ');
     $trending = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Map database columns to frontend format
+    $mappedTrending = array_map('mapServiceForAI', $trending);
+    
     echo json_encode([
         'success' => true,
-        'trending' => $trending,
+        'trending' => $mappedTrending,
         'period' => 'last_30_days'
     ]);
 }
