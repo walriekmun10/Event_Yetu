@@ -1,0 +1,12 @@
+{
+    "name": "event-yetu/backend",
+    "description": "Event Management System Backend",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "setasign/fpdf": "^1.8"
+    },
+    "autoload": {
+        "files": []
+    }
+}

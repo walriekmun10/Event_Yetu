@@ -1,0 +1,7 @@
+{
+  "name": "event-yetu/app",
+  "description": "Event Yetu - simple event management system",
+  "require": {
+    "setasign/fpdf": "^1.8"
+  }
+}
