@@ -78,14 +78,14 @@ export default function AdminDashboard(){
     }]
   } : null
 
-  // Calculate booking status distribution
+  // Calculate booking status distribution based on payment status
   const bookingStatusData = data && data.detailedBookings ? {
-    labels: ['Completed', 'Confirmed', 'Pending'],
+    labels: ['Paid', 'Confirmed', 'Pending'],
     datasets: [{
       data: [
-        data.detailedBookings.filter(b => b.status === 'completed').length,
-        data.detailedBookings.filter(b => b.status === 'confirmed').length,
-        data.detailedBookings.filter(b => b.status === 'pending').length
+        data.detailedBookings.filter(b => b.payment_status === 'Completed').length,
+        data.detailedBookings.filter(b => !b.payment_status && b.status === 'confirmed').length,
+        data.detailedBookings.filter(b => !b.payment_status && b.status === 'pending').length
       ],
       backgroundColor: [
         'rgba(16, 185, 129, 0.8)',
@@ -101,16 +101,16 @@ export default function AdminDashboard(){
     }]
   } : null
 
-  // Calculate revenue data
+  // Calculate revenue data based on payment status
   const totalRevenue = data && data.detailedBookings 
     ? data.detailedBookings
-        .filter(b => b.status === 'completed')
-        .reduce((sum, b) => sum + parseFloat(b.price || 0), 0)
+        .filter(b => b.payment_status === 'Completed')
+        .reduce((sum, b) => sum + parseFloat(b.payment_amount || b.price || 0), 0)
     : 0
 
   const pendingRevenue = data && data.detailedBookings 
     ? data.detailedBookings
-        .filter(b => b.status === 'pending' || b.status === 'confirmed')
+        .filter(b => !b.payment_status && (b.status === 'pending' || b.status === 'confirmed'))
         .reduce((sum, b) => sum + parseFloat(b.price || 0), 0)
     : 0
 
@@ -451,7 +451,7 @@ export default function AdminDashboard(){
                           <p className="text-sm text-purple-700 font-semibold mb-1">Avg Revenue per Booking</p>
                           <p className="text-2xl font-bold text-purple-900">
                             Ksh {data.bookings > 0 && totalRevenue > 0
-                              ? Math.round(totalRevenue / data.detailedBookings.filter(b => b.status === 'completed').length).toLocaleString()
+                              ? Math.round(totalRevenue / data.detailedBookings.filter(b => b.payment_status === 'Completed').length).toLocaleString()
                               : 0}
                           </p>
                         </div>

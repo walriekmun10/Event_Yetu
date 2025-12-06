@@ -36,7 +36,7 @@ $popular = array_map(function($p) {
     ];
 }, $popularRaw);
 
-// Detailed booking information with dates, services, and users
+// Detailed booking information with dates, services, users, and payment status
 $detailedBookings = $pdo->query('
     SELECT 
         b.booking_id,
@@ -46,11 +46,14 @@ $detailedBookings = $pdo->query('
         s.service_price,
         u.user_name as client_name,
         u.user_email as client_email,
-        p.user_name as provider_name
+        p.user_name as provider_name,
+        pay.payment_status,
+        pay.payment_amount
     FROM bookings b
     JOIN services s ON b.booking_service_id = s.service_id
     JOIN users u ON b.booking_client_id = u.user_id
     LEFT JOIN users p ON s.service_provider_id = p.user_id
+    LEFT JOIN payments pay ON b.booking_id = pay.payment_booking_id
     ORDER BY b.booking_date DESC
     LIMIT 100
 ')->fetchAll(PDO::FETCH_ASSOC);
@@ -65,7 +68,9 @@ $mappedBookings = array_map(function($b) {
         'price' => $b['service_price'],
         'client_name' => $b['client_name'],
         'client_email' => $b['client_email'],
-        'provider_name' => $b['provider_name']
+        'provider_name' => $b['provider_name'],
+        'payment_status' => $b['payment_status'],
+        'payment_amount' => $b['payment_amount']
     ];
 }, $detailedBookings);
 
