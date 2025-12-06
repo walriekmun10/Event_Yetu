@@ -39,13 +39,13 @@ if ($method === 'GET') {
         exit;
     }
     if ($payload['role'] === 'provider') {
-        $q = $pdo->prepare('SELECT b.*, s.service_name, s.service_price, c.user_name as client_name FROM bookings b JOIN services s ON b.booking_service_id = s.service_id JOIN users c ON b.booking_client_id = c.user_id WHERE s.service_provider_id = :pid ORDER BY b.booking_created_at DESC');
+        $q = $pdo->prepare('SELECT b.*, s.service_name, s.service_price, u.user_name as provider_name, c.user_name as client_name FROM bookings b JOIN services s ON b.booking_service_id = s.service_id JOIN users u ON s.service_provider_id = u.user_id JOIN users c ON b.booking_client_id = c.user_id WHERE s.service_provider_id = :pid ORDER BY b.booking_created_at DESC');
         $q->execute([':pid' => $payload['sub']]);
         echo json_encode(array_map('mapBooking', $q->fetchAll()));
         exit;
     }
     // client
-    $q = $pdo->prepare('SELECT b.*, s.service_name, s.service_price, u.user_name as provider_name FROM bookings b JOIN services s ON b.booking_service_id = s.service_id JOIN users u ON s.service_provider_id = u.user_id WHERE b.booking_client_id = :cid ORDER BY b.booking_created_at DESC');
+    $q = $pdo->prepare('SELECT b.*, s.service_name, s.service_price, u.user_name as provider_name, c.user_name as client_name FROM bookings b JOIN services s ON b.booking_service_id = s.service_id JOIN users u ON s.service_provider_id = u.user_id JOIN users c ON b.booking_client_id = c.user_id WHERE b.booking_client_id = :cid ORDER BY b.booking_created_at DESC');
     $q->execute([':cid' => $payload['sub']]);
     echo json_encode(array_map('mapBooking', $q->fetchAll()));
     exit;
