@@ -40,9 +40,9 @@ if ($method === 'GET') {
         exit;
     }
 
-    // Provider: get their own services (all statuses)
+    // Provider: get their own services + admin-created services (all statuses)
     if ($payload && $payload['role'] === 'provider') {
-        $q = $pdo->prepare('SELECT s.*, u.user_name as provider_name FROM services s JOIN users u ON s.service_provider_id = u.user_id WHERE s.service_provider_id = :pid ORDER BY s.service_created_at DESC');
+        $q = $pdo->prepare('SELECT s.*, u.user_name as provider_name FROM services s JOIN users u ON s.service_provider_id = u.user_id WHERE s.service_provider_id = :pid OR u.user_role = "admin" ORDER BY s.service_created_at DESC');
         $q->execute([':pid' => $payload['sub']]);
         $rows = $q->fetchAll();
         echo json_encode(array_map('mapService', $rows));
