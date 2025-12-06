@@ -105,13 +105,13 @@ export default function AdminDashboard(){
   const totalRevenue = data && data.detailedBookings 
     ? data.detailedBookings
         .filter(b => b.status === 'completed')
-        .reduce((sum, b) => sum + parseFloat(b.service_price || 0), 0)
+        .reduce((sum, b) => sum + parseFloat(b.price || 0), 0)
     : 0
 
   const pendingRevenue = data && data.detailedBookings 
     ? data.detailedBookings
         .filter(b => b.status === 'pending' || b.status === 'confirmed')
-        .reduce((sum, b) => sum + parseFloat(b.service_price || 0), 0)
+        .reduce((sum, b) => sum + parseFloat(b.price || 0), 0)
     : 0
 
   const downloadPDF = ()=>{
@@ -651,7 +651,7 @@ export default function AdminDashboard(){
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span className="text-sm font-bold text-green-600">
-                                    Ksh {Number(booking.service_price).toLocaleString()}
+                                    Ksh {Number(booking.price).toLocaleString()}
                                   </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
