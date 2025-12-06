@@ -107,17 +107,17 @@ if ($method === 'PUT' && $id) {
         exit;
     }
 
-    // Admin can update status
-    if ($payload['role'] === 'admin' && isset($input['status'])) {
-        $pdo->prepare('UPDATE services SET service_status = :status WHERE service_id = :id')->execute([':status' => $input['status'], ':id' => $id]);
-        echo json_encode(['success' => true]);
+    // Admin can update any service fully, or provider can update their own
+    if ($payload['role'] !== 'admin' && $s['service_provider_id'] != $payload['sub']) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Forbidden']);
         exit;
     }
 
-    // Provider can update own service
-    if ($s['service_provider_id'] != $payload['sub']) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Forbidden']);
+    // Admin updating status only
+    if ($payload['role'] === 'admin' && isset($input['status']) && count($input) === 1) {
+        $pdo->prepare('UPDATE services SET service_status = :status WHERE service_id = :id')->execute([':status' => $input['status'], ':id' => $id]);
+        echo json_encode(['success' => true]);
         exit;
     }
 

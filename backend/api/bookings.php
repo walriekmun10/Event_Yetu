@@ -54,6 +54,7 @@ if ($method === 'GET') {
 // POST /bookings.php -> create booking (client)
 if ($method === 'POST') {
     $token = get_bearer_token();
+    if (!$token && isset($_GET['token'])) $token = $_GET['token'];
     $payload = $token ? jwt_validate($token) : false;
     if (!$payload || $payload['role'] !== 'client') {
         http_response_code(401);
