@@ -87,7 +87,7 @@ if ($method === 'PUT' && $id) {
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
 
     // Get booking details
-    $stmt = $pdo->prepare('SELECT b.*, s.service_provider_id FROM bookings b JOIN services s ON b.booking_service_id = s.service_id WHERE b.booking_id = :id');
+    $stmt = $pdo->prepare('SELECT b.*, s.service_provider_id, u.user_role as provider_role FROM bookings b JOIN services s ON b.booking_service_id = s.service_id JOIN users u ON s.service_provider_id = u.user_id WHERE b.booking_id = :id');
     $stmt->execute([':id' => $id]);
     $row = $stmt->fetch();
     if (!$row) {
@@ -118,8 +118,8 @@ if ($method === 'PUT' && $id) {
         exit;
     }
 
-    // Provider can update status only for their services
-    if ($payload['role'] === 'provider' && $row['service_provider_id'] == $payload['sub']) {
+    // Provider can update status for their services and admin services
+    if ($payload['role'] === 'provider' && ($row['service_provider_id'] == $payload['sub'] || $row['provider_role'] === 'admin')) {
         if (isset($input['status'])) {
             $pdo->prepare('UPDATE bookings SET booking_status = :status WHERE booking_id = :id')
                 ->execute([':status' => $input['status'], ':id' => $id]);
@@ -143,7 +143,7 @@ if ($method === 'PUT' && $id) {
     exit;
 }
 
-// DELETE /bookings.php?id= -> client can cancel own, admin can delete
+// DELETE /bookings.php?id= -> admin can delete, client can cancel own, provider can delete bookings for their services
 if ($method === 'DELETE' && $id) {
     $token = get_bearer_token();
     if (!$token && isset($_GET['token'])) $token = $_GET['token'];
@@ -155,6 +155,13 @@ if ($method === 'DELETE' && $id) {
     }
     if ($payload['role'] === 'admin') {
         $pdo->prepare('DELETE FROM bookings WHERE booking_id = :id')->execute([':id' => $id]);
+        echo json_encode(['success' => true]);
+        exit;
+    }
+    if ($payload['role'] === 'provider') {
+        // Provider can delete bookings for their services or admin services
+        $stmt = $pdo->prepare('DELETE FROM bookings b WHERE b.booking_id = :id AND EXISTS (SELECT 1 FROM services s JOIN users u ON s.service_provider_id = u.user_id WHERE s.service_id = b.booking_service_id AND (s.service_provider_id = :pid OR u.user_role = "admin"))');
+        $stmt->execute([':id' => $id, ':pid' => $payload['sub']]);
         echo json_encode(['success' => true]);
         exit;
     }
