@@ -449,7 +449,7 @@ export default function ClientDashboard(){
                             <div className="relative h-48 bg-gradient-to-br from-blue-400 to-purple-500 overflow-hidden">
                               {s.image ? (
                                 <img 
-                                  src={`http://localhost/Event-yetu/backend/uploads/${s.image}`} 
+                                  src={`http://localhost/Event-yetu/backend/uploads/services/${s.image}`} 
                                   alt={s.name}
                                   className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                                 />
@@ -578,7 +578,7 @@ export default function ClientDashboard(){
                                 <div className="w-full md:w-40 h-40 rounded-lg bg-gradient-to-br from-blue-400 to-purple-500 overflow-hidden flex-shrink-0 shadow-lg">
                                   {item.image ? (
                                     <img 
-                                      src={`http://localhost/Event-yetu/backend/uploads/${item.image}`} 
+                                      src={`http://localhost/Event-yetu/backend/uploads/services/${item.image}`} 
                                       alt={item.name}
                                       className="w-full h-full object-cover hover:scale-110 transition duration-300"
                                     />
