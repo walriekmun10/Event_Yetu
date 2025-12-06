@@ -129,7 +129,7 @@ export default function ProviderDashboard(){
     totalServices: services.length,
     approvedServices: services.filter(s => s.status === 'approved').length,
     pendingServices: services.filter(s => s.status === 'pending').length,
-    totalBookings: bookings.length,
+    totalBookings: bookings.filter(b => b.status !== 'cancelled').length,
     confirmedBookings: bookings.filter(b => b.status === 'confirmed').length,
     pendingBookings: bookings.filter(b => b.status === 'pending').length,
     cancelledBookings: bookings.filter(b => b.status === 'cancelled').length,
@@ -686,7 +686,7 @@ export default function ProviderDashboard(){
                   </button>
                 </div>
 
-                {bookings.length === 0 ? (
+                {bookings.filter(b => b.status !== 'cancelled').length === 0 ? (
                   <div className="bg-white rounded-xl shadow-md p-20 text-center">
                     <div className="text-6xl mb-4">📅</div>
                     <p className="text-xl text-gray-600 font-medium">No bookings yet</p>
@@ -694,7 +694,7 @@ export default function ProviderDashboard(){
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {bookings.map(b=>{
+                    {bookings.filter(b => b.status !== 'cancelled').map(b=>{
                       const service = services.find(s => s.id == b.service_id)
                       return (
                         <div key={b.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition p-6 border border-gray-100">
