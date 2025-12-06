@@ -24,6 +24,17 @@ export function AuthProvider({ children }){
       try{ 
         // Decode token to ensure it's valid, then fetch full profile
         const p = jwt_decode(token);
+        
+        // Check if token is expired
+        const now = Math.floor(Date.now() / 1000);
+        if (p.exp && p.exp < now) {
+          // Token is expired, clear it immediately
+          setUser(null);
+          setToken(null);
+          localStorage.removeItem('token');
+          return;
+        }
+        
         // Fetch full user profile from backend (includes profile_image)
         (async () => {
           try {
@@ -37,8 +48,15 @@ export function AuthProvider({ children }){
               setUser({ id: p.sub, role: p.role, email: p.email });
             }
           } catch (err) {
-            // If fetching profile fails, use decoded token minimally
-            setUser({ id: p.sub, role: p.role, email: p.email });
+            // If 401, token is invalid - clear it
+            if (err.response?.status === 401) {
+              setUser(null);
+              setToken(null);
+              localStorage.removeItem('token');
+            } else {
+              // Other errors, use decoded token minimally
+              setUser({ id: p.sub, role: p.role, email: p.email });
+            }
           }
         })();
       }catch(e){ 
@@ -55,18 +73,32 @@ export function AuthProvider({ children }){
   }
 
   const login = async (email,password)=>{
-    const res = await axios.post(`${API_BASE}/auth.php?action=login`,{email,password});
-    const t = res.data.token; 
-    const userData = res.data.user;
-    localStorage.setItem('token', t); 
-    setToken(t);
-    setUser({
-      id: userData.id, 
-      role: userData.role, 
-      email: userData.email,
-      name: userData.name
-    });
-    return res.data;
+    try {
+      const res = await axios.post(`${API_BASE}/auth.php?action=login`,{email,password});
+      const t = res.data.token; 
+      const userData = res.data.user;
+      
+      if (!t || !userData) {
+        throw new Error('Invalid response from server');
+      }
+      
+      localStorage.setItem('token', t); 
+      setToken(t);
+      setUser({
+        id: userData.id, 
+        role: userData.role, 
+        email: userData.email,
+        name: userData.name
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Login error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      throw error;
+    }
   }
   const register = async (name,email,password,role)=>{
     const res = await axios.post(`${API_BASE}/auth.php?action=register`,{name,email,password,role});
